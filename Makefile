@@ -6,9 +6,7 @@ OBJS=server client
 
 all: $(OBJS)
 server: server.c
-	gcc -Wall -Werror -o server server.c
-client: client.c
-	gcc -Wall -Werror -o client client.c
+	gcc -Wall -Werror -ggdb -o server server.c
 fmt:
 	clang-format -i *.c
 clean:

@@ -10,23 +10,13 @@
 
 ## example写了点啥
 
-就是一个最简易的基于socket的C/S数据传输模型
+就是一个最简易的server，只处理了socket连接，随即就关闭了。
 
 ## How to run
 
-First, run `make all`
+1. `make server`
+1. `./server --mode 0|1 [--et] [--loop-accept] --port 1234 [--sleep n(s)]`
 
-In terminal1
+## 详解请见[博客](https://blog.leosocy.top/epoll%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0/)
 
-```shell
-./server
-```
-
-In terminal2
-
-```shell
-./client
-```
-
-在client输入"xxx"，server会收到对应消息，然后回复"hello, xxx"
 
