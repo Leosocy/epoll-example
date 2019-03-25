@@ -37,14 +37,15 @@ int slp = 0;
   if (r) {                                                                                                          \
     printf(__VA_ARGS__);                                                                                            \
     printf("\n[ERR at pid:%d %s:%d] [errno]:%d [errmsg]:%s", getpid(), __FILE__, __LINE__, errno, strerror(errno)); \
-    fflush(stdout); \
+    fflush(stdout);                                                                                                 \
     exit(1);                                                                                                        \
   }
 
-#define log(fmt, ...) do {\
-   printf("[LOG at pid:%d %s:%d] " #fmt "\n", getpid(), __FILE__, __LINE__, ##__VA_ARGS__);     \
-   fflush(stdout); \
-} while(0)
+#define log(fmt, ...)                                                                        \
+  do {                                                                                       \
+    printf("[LOG at pid:%d %s:%d] " #fmt "\n", getpid(), __FILE__, __LINE__, ##__VA_ARGS__); \
+    fflush(stdout);                                                                          \
+  } while (0)
 
 void set_socket_binding(int listen_fd, const char* serv_ip, unsigned short port, int backlog) {
   struct sockaddr_in serv_addr;
@@ -99,24 +100,24 @@ void register_epoll_events(int epfd, int listen_fd, int events, int op) {
 }
 
 void send_hello(int conn_fd) {
-    char buf[] = "Hello from server.\n";
-    write(conn_fd, buf, strlen(buf));
+  char buf[] = "Hello from server.\n";
+  write(conn_fd, buf, strlen(buf));
 }
 
 void handle_accept(int epfd, int listen_fd) {
   struct sockaddr_in client_addr;
   socklen_t addrlen = sizeof(client_addr);
   do {
-  int conn_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &addrlen);
-  if (conn_fd <= 0) {
-    if (!et) {
-      log("thunder herd");
+    int conn_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &addrlen);
+    if (conn_fd <= 0) {
+      if (!et) {
+        log("thunder herd");
+      }
+      return;
     }
-    return;
-  }
-  log("accept connection from %s:%d", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
-  send_hello(conn_fd);
-  close(conn_fd);
+    log("accept connection from %s:%d", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
+    send_hello(conn_fd);
+    close(conn_fd);
   } while (loop_accept);
 }
 
@@ -131,7 +132,7 @@ void epoll_loop_once(int epfd, int listen_fd, int wait_ms) {
   for (i = 0; i < nfds; ++i) {
     int fd = ready_events[i].data.fd;
     int events = ready_events[i].events;
-    if (events & (EPOLLIN |EPOLLERR )) {
+    if (events & (EPOLLIN | EPOLLERR)) {
       if (fd == listen_fd) {
         handle_accept(epfd, listen_fd);
       } else {
@@ -179,7 +180,7 @@ void parse_args(int argc, char** argv) {
     } else if (strcmp("--sleep", argv[i]) == 0) {
       slp = atoi(argv[++i]);
     } else {
-        exit_if(1, usage);
+      exit_if(1, usage);
     }
     i++;
   }
